@@ -1,6 +1,7 @@
 <script lang="ts">
     export let src: string;
     export let alt: string;
+    export let size: string = 'M';
     let loading = false;
   
     function handleLoad() {
@@ -25,7 +26,7 @@
     {/if}
   
     <img
-      src={`https://covers.openlibrary.org/b/isbn/${src}-M.jpg`}
+      src={`https://covers.openlibrary.org/b/isbn/${src}-${size}.jpg`}
       alt={alt}
       on:load={handleLoad}
       on:error={handleError}

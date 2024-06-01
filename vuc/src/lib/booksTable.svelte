@@ -1,5 +1,5 @@
 <script lang="ts">
-	import ImageComponent from "./imageComponent.svelte";
+	import BookCoverImage from "./bookCoverComponent.svelte";
 
     type Book = {
       id: string;
@@ -26,7 +26,7 @@
         {#each books as book}
           <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
             <td class="px-6 py-4">
-              <ImageComponent src ={book.id} alt ={book.name} />
+              <BookCoverImage src ={book.id} alt ={book.name} />
             </td>
             <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">{book.name}</td>
             <td class="px-6 py-4">{book.author}</td>

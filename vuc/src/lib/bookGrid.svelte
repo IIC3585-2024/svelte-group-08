@@ -1,5 +1,6 @@
 <script>
     export let books;
+    import BookCoverImage from "./bookCoverComponent.svelte";
   </script>
   
   <style>
@@ -51,11 +52,7 @@
   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
     {#each books as book}
       <div class="book-item">
-        <img
-          class="w-32 h-auto"
-          src={`https://covers.openlibrary.org/b/isbn/${book.id}-M.jpg`}
-          alt={book.name}
-        />
+        <BookCoverImage src ={book.id} alt ={book.name} size="M"/>
         <div class="book-info">
           <div class="font-bold">{book.name}</div>
           <div class="book-introduction">{book.introduction}</div>
