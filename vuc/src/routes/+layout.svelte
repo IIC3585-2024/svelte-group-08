@@ -1,8 +1,8 @@
 <script>
 	import NavBar from '$lib/navBar.svelte';
 	import { onMount } from 'svelte';
-	import { initializeUser } from '../stores/auth';
-	import { user, loggedIn } from '../stores/user';
+	import { initializeUser, loggedIn } from '../stores/auth';
+
 
 	// Initialize the user state when the app mounts
 	onMount(() => {
