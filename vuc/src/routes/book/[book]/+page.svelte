@@ -115,7 +115,7 @@ import BookCoverComponent from "$lib/bookCoverComponent.svelte";
             <AddToListComponent />
             <SelectScore />
             <RecommendButton />
-            <RecommendButtonAlternative />
+
           </div>
 
           <hr class="my-6 md:my-8 border-gray-200 dark:border-gray-800" />

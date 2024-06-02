@@ -1,6 +1,6 @@
 <script lang="ts">
   import { writable } from 'svelte/store';
-	import BooksTable from './booksTable.svelte';
+import BooksTable from './booksTable.svelte';
 
 
 
