@@ -6,33 +6,66 @@ import BookCoverComponent from "$lib/bookCoverComponent.svelte";
 	import RecommendButton from "$lib/recommendButton.svelte";
     import RecommendButtonAlternative from "$lib/recommendButtonAlternative.svelte";
 	import SelectScore from "$lib/selectScore.svelte";
+	import { writable } from "svelte/store";
       import "../../../app.css";
-    export let data: { bookId: string };
+	import { onMount } from "svelte";
+      export let data: { bookId: string };
+      console.log(data);
 
-    type Book = {
-      id: string;
-      name: string;
-      introduction: string;
-      author: string;
-    };
+type Book = {
+  id: string;
+  title: string;
+  description: string;
+  authors: string[];
+  covers: string[];
+};
 
-    console.log(data.bookId)
+// Create a writable store to hold the book data
+const book = writable<Book>();
+  const isLoading = writable<boolean>(true); // Boolean variable to track loading state
 
-    const book: Book = { id: '9780321125217', name: 'Domain-Driven Design', introduction: 'Explains how to incorporate effective domain modeling into the software development process.', author: 'Eric Evans' };
+  const fetchBookData = async () => {
+    try {
+      const response = await fetch(`http://localhost:3000/books/searchByKey?key=${data.bookId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch book data');
+      }
+      const bookData = await response.json();
+      const parsedBookData = {
+        id: data.bookId,
+        title: bookData.book.title,
+        description: bookData.book.description,
+        authors: bookData.book.authors,
+        covers: bookData.book.covers,
+      }
+      book.set(parsedBookData as Book); // Update the store with the fetched book data
+    } catch (error) {
+      console.error(error);
+    } finally {
+      isLoading.set(false); // Set loading state to false when fetch completes
+    }
+  };
 
-  </script>
+  onMount(() => {
+    fetchBookData();
+  });
+</script>
+{#if $isLoading}
+  <!-- Loading indicator -->
+  <div>Loading...</div>
+{:else}
 <section class="py-8  antialiased">
     <div class="max-w-screen-xl px-4 mx-auto 2xl:px-0">
       <div class="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-16">
         <div class="shrink-0 max-w-md lg:max-w-lg ">
-            <BookCoverComponent src ={book.id} alt ={book.name} size="M"/>
+            <BookCoverComponent source={"id"} src ={$book.covers[0]} alt ={$book.title} size="L"/>
         </div>
 
         <div class="mt-6 sm:mt-8 lg:mt-0">
           <h1
             class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white"
           >
-            {book.name}
+            {$book.title}
           </h1>
           <div class="mt-4 sm:items-center sm:gap-4 sm:flex">
             <div class="flex items-center gap-2 mt-2 sm:mt-0">
@@ -121,10 +154,10 @@ import BookCoverComponent from "$lib/bookCoverComponent.svelte";
           <hr class="my-6 md:my-8 border-gray-200 dark:border-gray-800" />
 
           <p class="mb-6 text-gray-500 dark:text-gray-400">
-            {book.introduction}
+            {$book.description}
           </p>
         </div>
       </div>
     </div>
   </section>
-  
+  {/if}

@@ -2,6 +2,7 @@
     export let src: string;
     export let alt: string;
     export let size: string = 'M';
+    export let source = "isbn";
     let loading = false;
   
     function handleLoad() {
@@ -12,6 +13,7 @@
       loading = false;
       console.error('Failed to load image:', src);
     }
+    console.log(`https://covers.openlibrary.org/b/${source}/${src}-${size}.jpg`);
   </script>
   
   <div class="relative">
@@ -26,7 +28,7 @@
     {/if}
   
     <img
-      src={`https://covers.openlibrary.org/b/isbn/${src}-${size}.jpg`}
+      src={`https://covers.openlibrary.org/b/${source}/${src}-${size}.jpg`}
       alt={alt}
       on:load={handleLoad}
       on:error={handleError}
@@ -41,7 +43,6 @@
     }
     .loaded {
       display: block;
-      width: 100%;
       height: auto;
     }
   </style>
