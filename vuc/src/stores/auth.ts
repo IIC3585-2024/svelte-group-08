@@ -1,12 +1,13 @@
 import { writable } from 'svelte/store';
 
 interface User {
+    id: number;
     email: string;
     password: string;
 }
 
 
-export const user = writable(null);
+export const user = writable<User|null>(null);
 export const loggedIn = writable(false);
 
 export async function login(username: string, password: string) {
@@ -47,6 +48,7 @@ export function initializeUser() {
     if (storedUser) {
         user.set(JSON.parse(storedUser));
         loggedIn.set(true);
+        console.log('User initialized from local storage', JSON.parse(storedUser));
     }
 }
 

@@ -21,7 +21,6 @@ export const searchBooks = debounce(async (event: Event) => {
     try {
       const response = await fetch(`http://localhost:3000/books/searchByTitle?title=${searchText}`);
       const results = await response.json();
-      console.log(results);
       searchResults.set(results.books as Book[]);
     } catch (error) {
       console.error('Error fetching search results:', error);

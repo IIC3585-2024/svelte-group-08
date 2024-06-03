@@ -1,17 +1,15 @@
 <script  lang="ts">
 	import { searchResults } from "../stores/books";
+  import { goto } from '$app/navigation';
 
-type Book = {
-    cover_i: string;
-    key: string;
-    author_name: string[];
-    first_sentence: string;
-    title: string;
-  };
-
-
-    export let books : Book[] = [];
     import BookCoverImage from "./bookCoverComponent.svelte";
+
+    function handleBookCoverClick(bookKey: string) {
+    // Perform actions when book cover is clicked, e.g., navigate to book details page
+    const bookId = bookKey.replace('/works/', '');
+    goto(`/book/${bookId}`);
+    console.log("aa")
+  }
     
   </script>
   
@@ -64,7 +62,9 @@ type Book = {
   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
     {#each $searchResults as book}
       <div class="book-item">
-        <BookCoverImage src={book.cover_i} alt={book.title} size="M" />
+          <button on:click={() => handleBookCoverClick(book.key)} >
+          <BookCoverImage src={book.cover_i} alt={book.title} size="M"/>
+        </button>
         <div class="book-info">
           <div class="font-bold">{book.title}</div>
           {#if book.first_sentence?.[0]}

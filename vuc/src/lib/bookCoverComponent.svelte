@@ -13,7 +13,6 @@
       loading = false;
       console.error('Failed to load image:', src);
     }
-    console.log(`https://covers.openlibrary.org/b/${source}/${src}-${size}.jpg`)
   </script>
   
   <div class="relative">
