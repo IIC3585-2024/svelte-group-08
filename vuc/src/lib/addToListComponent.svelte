@@ -3,7 +3,7 @@
 
 <script lang="ts">
 
-    export let bookInList : boolean = true;
+    export let bookInList : boolean = false;
     let user = localStorage.getItem('user');
     console.log(user);
 </script>

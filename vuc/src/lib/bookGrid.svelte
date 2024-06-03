@@ -1,6 +1,18 @@
-<script>
-    export let books;
+<script  lang="ts">
+	import { searchResults } from "../stores/books";
+
+type Book = {
+    cover_i: string;
+    key: string;
+    author_name: string[];
+    first_sentence: string;
+    title: string;
+  };
+
+
+    export let books : Book[] = [];
     import BookCoverImage from "./bookCoverComponent.svelte";
+    
   </script>
   
   <style>
@@ -50,13 +62,17 @@
   </style>
   
   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-    {#each books as book}
+    {#each $searchResults as book}
       <div class="book-item">
-        <BookCoverImage src ={book.id} alt ={book.name} size="M"/>
+        <BookCoverImage src={book.cover_i} alt={book.title} size="M" />
         <div class="book-info">
-          <div class="font-bold">{book.name}</div>
-          <div class="book-introduction">{book.introduction}</div>
-          <div class="book-author">Author: {book.author}</div>
+          <div class="font-bold">{book.title}</div>
+          {#if book.first_sentence?.[0]}
+            <div class="book-introduction">{book.first_sentence[0]}</div>
+          {/if}
+          {#if book.author_name?.[0]}
+            <div class="book-author">Author: {book.author_name[0]}</div>
+          {/if}
         </div>
       </div>
     {/each}
