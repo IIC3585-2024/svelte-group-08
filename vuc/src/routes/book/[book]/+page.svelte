@@ -20,7 +20,7 @@
 
 	// Create a writable store to hold the book data
 	const book = writable<Book>();
-    const bookListData = writable();
+    const bookListData = writable(null);
 	const isLoading = writable<boolean>(true); // Boolean variable to track loading state
 
 	const fetchBookData = async () => {
@@ -43,8 +43,7 @@
       if (!$user) {
         return;
       }
-      const query= `http://localhost:3000/userList/getByKey/${$user?.id}/${data.bookId}`;
-      console.log(query)
+      const query= `http://localhost:3000/listElements/userList/getByKey/${$user?.id}/${data.bookId}`;
       const response2 = await fetch(query);
 			if (!response2.ok) {
 				throw new Error('Failed to fetch book data');
@@ -153,7 +152,7 @@
 					</div>
 
 					<div class="mt-6 sm:gap-4 sm:items-center sm:flex sm:mt-8">
-						<AddToListComponent />
+						<AddToListComponent bookListData={bookListData} bookData={$book} />
 						<SelectScore />
 						<RecommendButton />
 					</div>
