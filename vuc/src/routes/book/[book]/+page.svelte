@@ -2,71 +2,26 @@
 	import AddToListComponent from '$lib/addToListComponent.svelte';
 	import BookCoverComponent from '$lib/bookCoverComponent.svelte';
 	import RecommendButton from '$lib/recommendButton.svelte';
-	import RecommendButtonAlternative from '$lib/recommendButtonAlternative.svelte';
+
 	import SelectScore from '$lib/selectScore.svelte';
-	import { writable } from 'svelte/store';
+
 	import '../../../app.css';
 	import { onMount } from 'svelte';
-	import { user } from '../../../stores/auth';
+	import { book, bookListData, initializeBookData, isBookLoading, isLoading } from '../../../stores/books';
+
 	export let data: { bookId: string };
 
-	type Book = {
-		id: string;
-		title: string;
-		description: string;
-		authors: string[];
-		covers: string[];
-	};
 
-	// Create a writable store to hold the book data
-	const book = writable<Book>();
-    const bookListData = writable(null);
-	const isLoading = writable<boolean>(true); // Boolean variable to track loading state
-
-	const fetchBookData = async () => {
-		try {
-			const response = await fetch(`http://localhost:3000/books/searchByKey?key=${data.bookId}`);
-			if (!response.ok) {
-				throw new Error('Failed to fetch book data');
-			}
-			const bookData = await response.json();
-			console.log(bookData);
-			const parsedBookData = {
-				id: data.bookId,
-				title: bookData.book.title,
-				description: bookData.book.description,
-				authors: bookData.book.authors,
-				covers: bookData.book.covers
-			};
-			book.set(parsedBookData as Book); // Update the store with the fetched book data
-      console.log($user);
-      if (!$user) {
-        return;
-      }
-      const query= `http://localhost:3000/listElements/userList/getByKey/${$user?.id}/${data.bookId}`;
-      const response2 = await fetch(query);
-			if (!response2.ok) {
-				throw new Error('Failed to fetch book data');
-			}
-			const bookListDataResponse = await response2.json();
-      bookListData.set(bookListDataResponse);
-      console.log(bookListDataResponse);
-		} catch (error) {
-			console.error(error);
-		} finally {
-			isLoading.set(false); // Set loading state to false when fetch completes
-		}
-	};
-
-	onMount(() => {
-		fetchBookData();
-	});
+    onMount(() => {
+        const cleanup = initializeBookData(data.bookId);
+        return cleanup; // Clean up the subscription when the component is destroyed
+    });
 </script>
 
-{#if $isLoading}
+{#if $isBookLoading}
 	<!-- Loading indicator -->
 	<div>Loading...</div>
-{:else}
+	{:else if $book}
 	<section class="py-8 antialiased">
 		<div class="max-w-screen-xl px-4 mx-auto 2xl:px-0">
 			<div class="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-16">
@@ -152,7 +107,7 @@
 					</div>
 
 					<div class="mt-6 sm:gap-4 sm:items-center sm:flex sm:mt-8">
-						<AddToListComponent bookListData={bookListData} bookData={$book} />
+						<AddToListComponent/>
 						<SelectScore />
 						<RecommendButton />
 					</div>

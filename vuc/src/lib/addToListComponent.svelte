@@ -1,20 +1,22 @@
+<!-- src/components/ChildComponent.svelte -->
 <script lang="ts">
-  import { user } from '../stores/auth';
   import { get } from 'svelte/store';
+  import { user } from '../stores/auth';
+  import { selectedState, selectedScore, bookListData, book, initializeBookData, fetchBookListData } from '../stores/books';
 
-  export let bookListData: any;
-  export let bookData:any;
 
-  let selectedState = $bookListData.listElement.state || '';
+
+
+
   let isLoading = false;
 
-  console.log("aa", bookListData, bookData)
+  console.log($selectedState, $bookListData, $selectedScore);
 
   async function addToList() {
     const userData = get(user);
-    if (!userData || !userData.id) return;
+    if (!userData || !userData.id ) return;
 
-    const bookKey = bookData.id.replace('/works/', '');
+    const bookKey = $book?.id.replace('/works/', '');
     const requestBody = {
       userId: userData.id,
       key: bookKey
@@ -35,7 +37,8 @@
       }
 
       console.log('Book added to list');
-      bookListData.userHasBook = true;
+      if($book && $user)
+      fetchBookListData($user.id, $book.id);
     } catch (error) {
       console.error(error);
     } finally {
@@ -47,9 +50,12 @@
     const userData = get(user);
     if (!userData || !userData.id) return;
 
+    const state = get(selectedState);
+    const score = get(selectedScore);
+
     const requestBody = {
-      state: selectedState,
-      score: 10
+      state,
+      score
     };
 
     isLoading = true;
@@ -76,7 +82,7 @@
 </script>
 
 <div>
-  {#if $user && $user.id && bookListData}
+  {#if $user && $user.id && $bookListData}
     {#if !$bookListData.userHasBook}
       <button 
         type="button" 
@@ -95,7 +101,7 @@
         <select 
           id="states" 
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          bind:value={selectedState}
+          bind:value={$selectedState}
           disabled={isLoading}
         >
           <option value="Plan to read">Plan to read</option>
