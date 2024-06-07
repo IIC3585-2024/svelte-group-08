@@ -15,6 +15,14 @@
 		book: {
 			key: string;
 		};
+		userWhoGetsRecomended?:{
+			username: string;
+		}
+		userWhoRecomends?:{
+			username: string;
+		}
+		content?: string;
+
 	}
 
 	type BookData = {
@@ -23,6 +31,8 @@
 		description: string;
 		authors: string[];
 		covers: string[];
+		recommenderUsername?: string;
+		recommendationContent?: string;
 	};
 
 	export let state = '';
@@ -41,11 +51,14 @@
 				throw new Error('Failed to fetch user book list');
 			}
 			const data = await response.json();
+
 			userBookList.set(data);
 		} catch (error) {
 			console.error('Error fetching user book list:', error);
 		} finally {
+
 			for (let book of $userBookList) {
+
 				const bookData = await fetchBookData(book.book.key);
 				if (!bookData) continue;
 				books.update(($books) => [...$books, bookData]);
@@ -55,7 +68,31 @@
 		}
 	}
 
-	async function fetchBookData(bookId: string) {
+	async function fetchUserRecommendedBookList(userId: number, state?: string) {
+		try {
+			isListLoading.set(true);
+			let url = `http://localhost:3000/recomendations/received/${userId}`;
+			const response = await fetch(url);
+			if (!response.ok) {
+				throw new Error('Failed to fetch user book list');
+			}
+			const data = await response.json();
+			userBookList.set(data);
+		} catch (error) {
+			console.error('Error fetching user book list:', error);
+		} finally {
+
+			for (let book of $userBookList) {
+				const bookData = await fetchBookData(book.book.key, book);
+				if (!bookData) continue;
+				books.update(($books) => [...$books, bookData]);
+				
+			}
+      isListLoading.set(false);
+		}
+	}
+
+	async function fetchBookData(bookId: string, book?:any) {
 		try {
 			const response = await fetch(`http://localhost:3000/books/searchByKey?key=${bookId}`);
 			if (!response.ok) {
@@ -67,7 +104,9 @@
 				title: bookData.book.title,
 				description: bookData.book.description,
 				authors: bookData.authors,
-				covers: bookData.book.covers
+				covers: bookData.book.covers,
+				recommenderUsername: book?.userWhoRecomends?.username,
+				recommendationContent: book?.content
 			};
 			return parsedBookData;
 		} catch (error) {
@@ -78,7 +117,9 @@
 	onMount(() => {
 		if (!$user) return;
 		const userId = $user.id;
-		fetchUserBookList(userId, state);
+		if (state === 'recommended') fetchUserRecommendedBookList(userId, state);
+		else
+			fetchUserBookList(userId, state);
 	});
 </script>
 
@@ -90,6 +131,10 @@
 				<th scope="col" class="px-6 py-3">Name</th>
 				<th scope="col" class="px-6 py-3">Author</th>
 				<th scope="col" class="px-6 py-3">Introduction</th>
+				{#if state === 'recommended'}
+					<th scope="col" class="px-6 py-3">Recommender</th>
+					<th scope="col" class="px-6 py-3">Content</th>
+				{/if}
 				<th scope="col" class="px-6 py-3">Action</th>
 			</tr>
 		</thead>
@@ -114,6 +159,10 @@
 					<td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">{book.title}</td>
 					<td class="px-6 py-4">{book.authors}</td>
 					<td class="px-6 py-4">{book.description}</td>
+					{#if state === 'recommended'}
+						<td class="px-6 py-4">{book.recommenderUsername}</td>
+						<td class="px-6 py-4">{book.recommendationContent}</td>
+					{/if}
 					<td class="px-6 py-4">
 						<a
 							href={`/book/${book.id}`}

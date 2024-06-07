@@ -6,7 +6,7 @@
 
 
   let isLoading = false;
-  console.log($selectedScore, $selectedState)
+
   
   async function updateList() {
     const state = get(selectedState);

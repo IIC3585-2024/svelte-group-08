@@ -24,13 +24,12 @@ export const searchText = writable('Bible');
 export const searchResults = writable<BookSearch[]>([]);
 export const selectedState = writable('');
 export const selectedScore = writable('');
-// export const searchResults = writable([]);
-// Function to perform search operation
+
 export const searchBooks = debounce(async (event: Event) => {
     const text = (event.target as HTMLInputElement).value;
     
     try {
-      console.log(text)
+
       const response = await fetch(`http://localhost:3000/books/searchByTitle?title=${text}`);
       const results = await response.json();
       searchResults.set(results.books);
@@ -41,7 +40,7 @@ export const searchBooks = debounce(async (event: Event) => {
 
   export async function firstSearch(text:string) {
     try {
-      console.log(text)
+
         const response = await fetch(`http://localhost:3000/books/searchByTitle?title=${text}`);
         const results = await response.json();
         searchResults.set(results.books  as BookSearch[]);

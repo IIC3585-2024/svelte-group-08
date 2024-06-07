@@ -12,11 +12,6 @@
   
 
 
-// Function to perform search operation
- // Debounce time: 300ms
-
-
-
 
 
  function handleSearch(event: Event) {

@@ -5,25 +5,24 @@
     import BookCoverImage from "./bookCoverComponent.svelte";
 
     function handleBookCoverClick(bookKey: string) {
-    // Perform actions when book cover is clicked, e.g., navigate to book details page
     const bookId = bookKey.replace('/works/', '');
     goto(`/book/${bookId}`);
-    console.log("aa")
+
   }
     
   </script>
   
   <style>
-    /* Additional CSS styles */
+
     .book-item {
-      border: 1px solid #e5e7eb; /* Gray border */
+      border: 1px solid #e5e7eb;
       padding: 16px;
       border-radius: 8px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      background-color: #ffffff; /* White background */
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Soft shadow */
+      background-color: #ffffff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
   
     .book-info {
@@ -32,29 +31,28 @@
       align-items: flex-start;
       margin-top: 8px;
       width: 100%;
-      color: #374151; /* Dark gray text */
+      color: #374151; 
     }
   
     .book-author {
       margin-top: 8px;
       font-style: italic;
-      color: #6b7280; /* Light gray text */
+      color: #6b7280;
     }
-  
-    /* Adjustments for dark mode */
+
     @media (prefers-color-scheme: dark) {
       .book-item {
-        background-color: #1f2937; /* Darker background */
-        border-color: #374151; /* Dark border */
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4); /* Stronger shadow */
+        background-color: #1f2937;
+        border-color: #374151; 
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
       }
   
       .book-info {
-        color: #d1d5db; /* Light text for dark background */
+        color: #d1d5db;
       }
   
       .book-author {
-        color: #9ca3af; /* Light text for dark background */
+        color: #9ca3af;
       }
     }
   </style>

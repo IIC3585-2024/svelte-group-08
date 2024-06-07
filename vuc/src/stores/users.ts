@@ -31,7 +31,7 @@ export async function fetchUsers() {
 }
 
 export async function postRecommendation(userWhoRecommendsId: number, userWhoGetsRecommendedId: number, content: string, bookKey: string) {
-    console.log('Posting recommendation', userWhoRecommendsId, userWhoGetsRecommendedId, content, bookKey);
+
     try {
         const response = await fetch('http://localhost:3000/recomendations', {
             method: 'POST',
@@ -39,8 +39,8 @@ export async function postRecommendation(userWhoRecommendsId: number, userWhoGet
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                userWhoRecommendsId,
-                userWhoGetsRecommendedId,
+                userWhoRecomendsId: userWhoRecommendsId,
+                userWhoGetsRecomendedId: userWhoGetsRecommendedId,
                 content,
                 key: bookKey
             })
