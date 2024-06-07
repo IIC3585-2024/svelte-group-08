@@ -20,23 +20,35 @@ type BookSearch = {
 	};
   
 
-
+export const searchText = writable('Bible');
 export const searchResults = writable<BookSearch[]>([]);
 export const selectedState = writable('');
 export const selectedScore = writable('');
 // export const searchResults = writable([]);
 // Function to perform search operation
 export const searchBooks = debounce(async (event: Event) => {
-    const searchText = (event.target as HTMLInputElement).value;
+    const text = (event.target as HTMLInputElement).value;
     
     try {
-      const response = await fetch(`http://localhost:3000/books/searchByTitle?title=${searchText}`);
+      console.log(text)
+      const response = await fetch(`http://localhost:3000/books/searchByTitle?title=${text}`);
       const results = await response.json();
-      searchResults.set(results.books as BookSearch[]);
+      searchResults.set(results.books);
     } catch (error) {
       console.error('Error fetching search results:', error);
     }
   }, 300);
+
+  export async function firstSearch(text:string) {
+    try {
+      console.log(text)
+        const response = await fetch(`http://localhost:3000/books/searchByTitle?title=${text}`);
+        const results = await response.json();
+        searchResults.set(results.books  as BookSearch[]);
+      } catch (error) {
+        console.error('Error fetching search results:', error);
+      }
+   }
 
   export const book = writable<BookData | null>(null);
   export const isBookLoading = writable<boolean>(true);

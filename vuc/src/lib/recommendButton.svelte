@@ -1,18 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import { writable } from 'svelte/store';
-
-    const isOpen = writable(false);
-    const users = writable([
-        { id: 1, name: "Bonnie Green", selected: false },
-        { id: 2, name: "Jese Leos", selected: false },
-        { id: 3, name: "Michael Gough", selected: false },
-        { id: 4, name: "Robert Wall", selected: false },
-        { id: 5, name: "Joseph Mcfall", selected: false },
-        { id: 6, name: "Leslie Livingston", selected: false },
-        { id: 7, name: "Roberta Casas", selected: false }
-    ]);
-    const recommendation = writable("");
+    import { isOpen, users, recommendation, fetchUsers, postRecommendation } from '../stores/users';
+	import { book } from '../stores/books';
 
     function toggleModal() {
         isOpen.update(value => !value);
@@ -22,25 +11,34 @@
         isOpen.set(false);
     }
 
-    function toggleUserSelection(userId: number) {
-        users.update(allUsers => 
-            allUsers.map(user => 
+    function toggleUserSelection(userId: string) {
+        users.update($users => 
+        $users.map(user => 
                 user.id === userId ? { ...user, selected: !user.selected } : user
             )
         );
     }
+    console.log($book);
 
     function confirm() {
-        let selectedUsers;
-        users.subscribe(value => selectedUsers = value.filter(user => user.selected));
-        let recommendationMessage;
-        recommendation.subscribe(value => recommendationMessage = value);
-        
-        console.log("Selected Users:", selectedUsers);
-        console.log("Recommendation:", recommendationMessage);
-        
-        closeModal();
-    }
+        let selectedUsers = [] as any[];
+    users.subscribe(value => {
+        selectedUsers = value.filter(user => user.selected);
+    })();
+    let recommendationMessage = '';
+    recommendation.subscribe(value => recommendationMessage = value)();
+    if(!$book) return;
+    let bookKey = $book.id; // Get the book key from somewhere
+    let userWhoRecommendsId = 1; // Assuming you have the ID of the user who is making the recommendation
+    selectedUsers.forEach(user => {
+        postRecommendation(userWhoRecommendsId, user.id, recommendationMessage, bookKey);
+    });
+    closeModal();
+}
+
+    onMount(() => {
+        fetchUsers();
+    });
 </script>
 
 <!-- Modal toggle -->
@@ -71,17 +69,7 @@
                 </div>
                 <!-- Modal body -->
                 <div class="p-4 md:p-5 space-y-4">
-                    <div class="p-3">
-                        <label for="input-group-search" class="sr-only">Search</label>
-                        <div class="relative">
-                          <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                          </svg>
-                          </div>
-                          <input type="text" id="input-group-search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search user">
-                        </div>
-                      </div>
+
                       <ul class="h-48 px-3 pb-3 overflow-y-auto text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownSearchButton">
                         {#each $users as user}
                           <li>
